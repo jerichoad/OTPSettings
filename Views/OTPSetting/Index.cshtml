@@ -1,0 +1,115 @@
+@model OTPSettingViewModel
+@{
+    ViewData["Title"] = "OTP Setting";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-12 col-sm-8 col-md-6 col-lg-5">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center"
+                     data-bs-toggle="collapse" data-bs-target="#otpSettingBody" aria-expanded="true" role="button">
+                    <span class="text-danger fw-bold">OTP Setting</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="text-muted" viewBox="0 0 16 16" aria-hidden="true">
+                        <path fill-rule="evenodd" d="M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z" />
+                    </svg>
+                </div>
+                <div id="otpSettingBody" class="collapse show">
+                    <div class="card-body">
+
+                        @if (TempData["SuccessMessage"] != null)
+                        {
+                            <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+                        }
+                        @if (TempData["ErrorMessage"] != null)
+                        {
+                            <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+                        }
+
+                        <form asp-controller="OTPSetting" asp-action="Update" method="post">
+                            <table class="table table-bordered mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Action</th>
+                                        <th colspan="2" class="text-center">Channel Type</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="align-middle">Checklist All</td>
+                                        <td class="text-center align-middle">
+                                            <label class="d-inline-flex align-items-center gap-1 mb-0">
+                                                <input type="checkbox" data-otp-check-all="Email" />
+                                                Email
+                                            </label>
+                                        </td>
+                                        <td class="text-center align-middle">
+                                            <label class="d-inline-flex align-items-center gap-1 mb-0">
+                                                <input type="checkbox" data-otp-check-all="Whatsapp" />
+                                                Whatsapp
+                                            </label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="align-middle">Withdrawal</td>
+                                        <td class="text-center align-middle"><input asp-for="WithdrawalEmail" data-otp-channel="Email" /></td>
+                                        <td class="text-center align-middle"><input asp-for="WithdrawalWhatsapp" data-otp-channel="Whatsapp" /></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="align-middle">Forgot Password</td>
+                                        <td class="text-center align-middle"><input asp-for="ForgotPasswordEmail" data-otp-channel="Email" /></td>
+                                        <td class="text-center align-middle"><input asp-for="ForgotPasswordWhatsapp" data-otp-channel="Whatsapp" /></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="align-middle">Reset Password</td>
+                                        <td class="text-center align-middle"><input asp-for="ResetPasswordEmail" data-otp-channel="Email" /></td>
+                                        <td class="text-center align-middle"><input asp-for="ResetPasswordWhatsapp" data-otp-channel="Whatsapp" /></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <div class="text-end mt-3">
+                                <button type="submit" class="btn btn-primary">Update</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        (function () {
+            function boxesForColumn(column) {
+                return document.querySelectorAll('[data-otp-channel="' + column + '"]');
+            }
+
+            // Checklist All: tick/untick every checkbox in its channel column
+            document.querySelectorAll('[data-otp-check-all]').forEach(function (checkAll) {
+                checkAll.addEventListener('change', function () {
+                    boxesForColumn(checkAll.dataset.otpCheckAll).forEach(function (box) {
+                        box.checked = checkAll.checked;
+                    });
+                });
+            });
+
+            // Keep Checklist All in sync when individual boxes change
+            function syncCheckAll(column) {
+                var boxes = Array.prototype.slice.call(boxesForColumn(column));
+                var checkAll = document.querySelector('[data-otp-check-all="' + column + '"]');
+                checkAll.checked = boxes.length > 0 && boxes.every(function (box) { return box.checked; });
+            }
+
+            document.querySelectorAll('[data-otp-channel]').forEach(function (box) {
+                box.addEventListener('change', function () {
+                    syncCheckAll(box.dataset.otpChannel);
+                });
+            });
+
+            syncCheckAll('Email');
+            syncCheckAll('Whatsapp');
+        })();
+    </script>
+}

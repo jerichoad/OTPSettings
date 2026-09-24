@@ -8,15 +8,15 @@ html {
   }
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+.btn:focus, .btn:active:focus, .form-control:focus, .form-check-input:focus {
   box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
-html {
-  position: relative;
-  min-height: 100%;
+/* Collapse toggle arrow: up when expanded, rotates down when collapsed (Bootstrap adds .collapsed) */
+[data-bs-toggle="collapse"] > svg {
+  transition: transform 0.2s ease-in-out;
 }
 
-body {
-  margin-bottom: 60px;
+[data-bs-toggle="collapse"].collapsed > svg {
+  transform: rotate(180deg);
 }
